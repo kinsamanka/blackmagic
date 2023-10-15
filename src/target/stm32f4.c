@@ -137,6 +137,7 @@ typedef struct stm32f4_priv {
 #define ID_STM32F72X  0x452U
 #define ID_STM32F410  0x458U
 #define ID_STM32F413  0x463U
+#define ID_GD32F427   0x544U
 #define ID_GD32F450   0x2b3U
 #define ID_GD32F470   0xa2eU
 
@@ -195,6 +196,8 @@ static char *stm32f4_get_chip_name(const uint32_t device_id)
 		return "STM32F76x";
 	case ID_STM32F72X: /* F72/3xC/E RM0431 */
 		return "STM32F72x";
+	case ID_GD32F427: /* GigaDevice F427 */
+		return "GD32F427";
 	case ID_GD32F450: /* GigaDevice F450 */
 		return "GD32F450";
 	case ID_GD32F470: /* GigaDevice F470 */
@@ -247,7 +250,7 @@ bool stm32f4_probe(target_s *t)
 
 bool gd32f4_probe(target_s *t)
 {
-	if (t->part_id != ID_GD32F450 && t->part_id != ID_GD32F470)
+	if (t->part_id != ID_GD32F427 && t->part_id != ID_GD32F450 && t->part_id != ID_GD32F470)
 		return false;
 
 	t->attach = cortexm_attach;
@@ -580,6 +583,7 @@ static bool optcr_mask(target_s *const t, uint32_t *const val)
 		break;
 	case ID_STM32F46X:
 	case ID_STM32F42X:
+	case ID_GD32F427:
 	case ID_GD32F450:
 	case ID_GD32F470:
 		val[0] &= ~0x30000000U;
@@ -622,7 +626,7 @@ static size_t stm32f4_opt_bytes_for(const uint16_t part_id)
 		return 3;
 	if (part_id == ID_STM32F42X || part_id == ID_STM32F46X || part_id == ID_STM32F74X || part_id == ID_STM32F76X)
 		return 2;
-	if (part_id == ID_GD32F450 || part_id == ID_GD32F470)
+	if (part_id == ID_GD32F427 || part_id == ID_GD32F450 || part_id == ID_GD32F470)
 		return 2;
 	return 1;
 }
@@ -679,6 +683,7 @@ static bool stm32f4_option_write_default(target_s *t)
 	switch (t->part_id) {
 	case ID_STM32F42X:
 	case ID_STM32F46X:
+	case ID_GD32F427:
 	case ID_GD32F450:
 	case ID_GD32F470:
 		val[0] = 0x0fffaaedU;
